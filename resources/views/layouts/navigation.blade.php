@@ -32,12 +32,19 @@
 
                     @if (Auth::user()->role === 'admin')
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                            {{ __('Admin Utama') }}
+                            {{ __('Admin Dashboard') }}
                         </x-nav-link>
                         <x-nav-link :href="route('admin.submissions.index')" :active="request()->routeIs('admin.submissions.*')">
-                            {{ __('Semua Borang') }}
+                            {{ __('Senarai Borang') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Senarai Pengguna') }}
                         </x-nav-link>
                     @endif
+
+                    <x-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
+                        {{ __('Hubungi Admin') }}
+                    </x-nav-link>
                 </div>
 
                 <!-- Settings Dropdown -->

@@ -52,7 +52,10 @@ class SubmissionController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $request->user()->submissions()->create($validated);
+        $submission = $request->user()->submissions()->create($validated);
+
+        // Send confirmation email
+        \Illuminate\Support\Facades\Mail::to($request->user())->send(new \App\Mail\SubmissionConfirmation($submission));
 
         return redirect()->route('submissions.index')->with('status', 'submission-created');
     }

@@ -23,15 +23,32 @@ class AdminController extends Controller
     {
         $query = Submission::with('user')->latest();
 
-        if ($request->has('search')) {
+        // Search by ID, Applicant Name, or Form Type
+        if ($request->filled('search')) {
             $search = $request->get('search');
             $query->where(function($q) use ($search) {
-                $q->where('applicant_name', 'like', "%{$search}%")
+                $q->where('id', 'like', "%{$search}%")
+                  ->orWhere('applicant_name', 'like', "%{$search}%")
                   ->orWhere('form_type', 'like', "%{$search}%");
             });
         }
 
-        $submissions = $query->paginate(20);
+        // Filter by Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->get('status'));
+        }
+
+        // Filter by Date Start
+        if ($request->filled('date_start')) {
+            $query->whereDate('created_at', '>=', $request->get('date_start'));
+        }
+
+        // Filter by Date End
+        if ($request->filled('date_end')) {
+            $query->whereDate('created_at', '<=', $request->get('date_end'));
+        }
+
+        $submissions = $query->paginate(20)->withQueryString();
 
         return view('admin.submissions.index', compact('submissions'));
     }

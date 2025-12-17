@@ -21,6 +21,7 @@ class Submission extends Model
         'quantity',
         'relationship',
         'notes',
+        'status',
     ];
 
     public function user()

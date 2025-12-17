@@ -1,8 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Admin: All Submissions') }}
-        </h2>
+        <div class="flex justify-between items-center" x-data>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Admin: All Submissions') }}
+            </h2>
+            <button @click="$dispatch('toggle-filter')"
+                class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Filter
+            </button>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -10,15 +20,94 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
 
-                    <!-- Search -->
-                    <div class="mb-4">
-                        <form method="GET" action="{{ route('admin.submissions.index') }}" class="flex">
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                placeholder="Search name or form..."
-                                class="rounded-l-md border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 flex-1">
-                            <button type="submit"
-                                class="bg-gray-800 text-white px-4 py-2 rounded-r-md hover:bg-gray-700">Search</button>
-                        </form>
+                    <!-- Collapsible Filter Section -->
+                    <div x-data="{ show: {{ request()->hasAny(['search', 'status', 'date_start', 'date_end']) ? 'true' : 'false' }} }" @toggle-filter.window="show = !show" class="mb-6">
+
+                        <div x-show="show" x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 transform -translate-y-2"
+                            x-transition:enter-end="opacity-100 transform translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 transform translate-y-0"
+                            x-transition:leave-end="opacity-0 transform -translate-y-2"
+                            class="bg-gray-50 p-6 rounded-xl border border-gray-100 shadow-inner">
+
+                            <form method="GET" action="{{ route('admin.submissions.index') }}">
+                                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                                    <!-- Search -->
+                                    <div class="md:col-span-4">
+                                        <label for="search"
+                                            class="block text-sm font-medium text-gray-700 mb-2">Carian</label>
+                                        <div
+                                            class="relative flex items-center w-full rounded-lg border border-gray-300 bg-white shadow-sm focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
+                                            <div class="pointer-events-none pl-3 flex items-center">
+                                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
+                                                    fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd"
+                                                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <input type="text" id="search" name="search"
+                                                value="{{ request('search') }}" placeholder="ID, Nama, Jenis..."
+                                                class="block w-full border-0 bg-transparent py-2.5 pl-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6">
+                                        </div>
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="md:col-span-3">
+                                        <label for="status"
+                                            class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                        <select id="status" name="status"
+                                            class="block w-full rounded-lg border-gray-300 bg-white py-2.5 pl-3 pr-10 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
+                                            <option value="">Semua Status</option>
+                                            <option value="pending"
+                                                {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="processing"
+                                                {{ request('status') == 'processing' ? 'selected' : '' }}>Processing
+                                            </option>
+                                            <option value="completed"
+                                                {{ request('status') == 'completed' ? 'selected' : '' }}>Completed
+                                            </option>
+                                            <option value="rejected"
+                                                {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Date Range -->
+                                    <div class="md:col-span-5">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Tarikh
+                                            Pendaftaran</label>
+                                        <div class="flex items-center gap-2">
+                                            <div class="relative flex-grow">
+                                                <input type="date" name="date_start"
+                                                    value="{{ request('date_start') }}"
+                                                    class="block w-full rounded-lg border-gray-300 bg-white py-2.5 px-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+                                                    placeholder="Dari">
+                                            </div>
+                                            <span class="text-gray-400 font-medium">-</span>
+                                            <div class="relative flex-grow">
+                                                <input type="date" name="date_end" value="{{ request('date_end') }}"
+                                                    class="block w-full rounded-lg border-gray-300 bg-white py-2.5 px-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+                                                    placeholder="Hingga">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="mt-6 flex items-center justify-end gap-3 border-t border-gray-200 pt-4">
+                                    <a href="{{ route('admin.submissions.index') }}"
+                                        class="text-sm font-medium text-gray-500 hover:text-gray-700 px-4 py-2 transition-colors">
+                                        Reset Filter
+                                    </a>
+                                    <button type="submit"
+                                        class="inline-flex justify-center rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-all">
+                                        Tapis Permohonan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -58,6 +147,26 @@
                                             {{ $submission->applicant_name }}</td>
                                         <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
                                             {{ $submission->address }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <form action="{{ route('admin.submissions.update-status', $submission) }}"
+                                                method="POST" x-data="{ status: '{{ $submission->status }}' }">
+                                                @csrf
+                                                @method('PATCH')
+                                                <select name="status" x-model="status" @change="$root.submit()"
+                                                    class="text-xs rounded-full border-gray-300 py-1 pl-2 pr-6 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm"
+                                                    :class="{
+                                                        'bg-yellow-100 text-yellow-800': status === 'pending',
+                                                        'bg-blue-100 text-blue-800': status === 'processing',
+                                                        'bg-green-100 text-green-800': status === 'completed',
+                                                        'bg-red-100 text-red-800': status === 'rejected'
+                                                    }">
+                                                    <option value="pending">Pending</option>
+                                                    <option value="processing">Processing</option>
+                                                    <option value="completed">Completed</option>
+                                                    <option value="rejected">Rejected</option>
+                                                </select>
+                                            </form>
+                                        </td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-900">
                                             <a href="{{ route('submissions.pdf', $submission) }}"

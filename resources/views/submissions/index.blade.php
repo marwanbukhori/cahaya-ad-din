@@ -42,12 +42,31 @@
                                                 {{ ucfirst(str_replace('_', ' ', $submission->form_type)) }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {{ $submission->applicant_name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">Submitted
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                @php
+                                                    $statusColors = [
+                                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                                        'processing' => 'bg-blue-100 text-blue-800',
+                                                        'completed' => 'bg-green-100 text-green-800',
+                                                        'rejected' => 'bg-red-100 text-red-800',
+                                                    ];
+                                                    $color =
+                                                        $statusColors[$submission->status] ??
+                                                        'bg-gray-100 text-gray-800';
+                                                @endphp
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $color }}">
+                                                    {{ ucfirst($submission->status) }}
+                                                </span>
                                             </td>
-                                            <td
-                                                class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-900">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                                 <a href="{{ route('submissions.pdf', $submission) }}"
                                                     class="text-emerald-600 hover:text-emerald-900">Download PDF</a>
+
+                                                <a href="mailto:admin@cahaya.com?subject=Inquiry: Submission #{{ $submission->id }}&body=Hello Admin, I have a question about my submission for {{ $submission->form_type }}..."
+                                                    class="text-gray-500 hover:text-gray-900 text-xs ml-2 border border-gray-200 rounded px-2 py-1">
+                                                    Contact Admin
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
