@@ -42,9 +42,11 @@
                         </x-nav-link>
                     @endif
 
-                    <x-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
-                        {{ __('Hubungi Admin') }}
-                    </x-nav-link>
+                    @if (Auth::user()->role !== 'admin')
+                        <x-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
+                            {{ __('Hubungi Admin') }}
+                        </x-nav-link>
+                    @endif
                 </div>
 
                 <!-- Settings Dropdown -->
@@ -106,8 +108,32 @@
         <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
             <div class="pt-2 pb-3 space-y-1">
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
+                    {{ __('Utama') }}
                 </x-responsive-nav-link>
+
+                @if (Auth::user()->role !== 'admin')
+                    <x-responsive-nav-link :href="route('submissions.index')" :active="request()->routeIs('submissions.*')">
+                        {{ __('Borang Saya') }}
+                    </x-responsive-nav-link>
+                @endif
+
+                @if (Auth::user()->role === 'admin')
+                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                        {{ __('Admin Dashboard') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.submissions.index')" :active="request()->routeIs('admin.submissions.*')">
+                        {{ __('Senarai Borang') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                        {{ __('Senarai Pengguna') }}
+                    </x-responsive-nav-link>
+                @endif
+
+                @if (Auth::user()->role !== 'admin')
+                    <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
+                        {{ __('Hubungi Admin') }}
+                    </x-responsive-nav-link>
+                @endif
             </div>
 
             <!-- Responsive Settings Options -->
