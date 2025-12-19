@@ -4,7 +4,7 @@
         defaultHero: {
             title: 'Cahaya Ad-Din',
             description: 'Urus Aqiqah, Qurban, Umrah dan lain-lain dengan mudah, cepat dan dipercayai.',
-            image: 'https://images.unsplash.com/photo-1564121211835-e88c852648ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+            image: '/img/masjidputra.jpg'
         },
         services: {{ json_encode(config('cahaya.services')) }},
         get currentHero() {

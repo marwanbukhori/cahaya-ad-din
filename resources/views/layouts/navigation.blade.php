@@ -34,12 +34,6 @@
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Admin Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('admin.submissions.index')" :active="request()->routeIs('admin.submissions.*')">
-                            {{ __('Senarai Borang') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
-                            {{ __('Senarai Pengguna') }}
-                        </x-nav-link>
                     @endif
 
                     @if (Auth::user()->role !== 'admin')
@@ -120,12 +114,6 @@
                 @if (Auth::user()->role === 'admin')
                     <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         {{ __('Admin Dashboard') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('admin.submissions.index')" :active="request()->routeIs('admin.submissions.*')">
-                        {{ __('Senarai Borang') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
-                        {{ __('Senarai Pengguna') }}
                     </x-responsive-nav-link>
                 @endif
 
